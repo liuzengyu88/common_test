@@ -8,6 +8,13 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.sql.*;
 
+/**
+ * 连接需要修改的内容：
+ * 1、principal
+ * 2、hive - username
+ * 3、hive - jdbcUrl
+ * 4、hive - dbName
+ */
 public class HiveRun {
 
     private static final Logger logger = LoggerFactory.getLogger(HiveRun.class);
