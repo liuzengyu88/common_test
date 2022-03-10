@@ -1,7 +1,5 @@
 package com.hive.run;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.security.UserGroupInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,51 +8,25 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.Properties;
 
-/**
- * 连接需要修改的内容：
- * 1、kerberos - principal
- * 2、kerberos - krbConf
- * 3、kerberos - keytab
- * 4、hive - username
- * 5、hive - jdbcUrl
- * 6、hive - dbName
- */
-public class HiveRun {
+public class AASHiveRun {
 
-    private static final Logger logger = LoggerFactory.getLogger(HiveRun.class);
+    private static final Logger logger = LoggerFactory.getLogger(AASHiveRun.class);
 
     private static final String driverName = "org.apache.hive.jdbc.HiveDriver";
 
-    private static final String CONF_PATH = "conf/";
-
     public static void main(String[] args) {
+
+        try {
+            Class.forName(driverName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         Properties env = new Properties();
         try {
             env.load(new FileInputStream("conf/common.properties"));
             logger.info("env : {}", env);
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String krbConf = CONF_PATH + env.getProperty("kerConfFileName"); // 配置文件
-        System.setProperty("java.security.krb5.conf", krbConf);
-        String kerPath = CONF_PATH + env.getProperty("keyTabFileName"); // 配置文件
-        String principal = env.getProperty("principal");
-        Configuration config = new Configuration();
-        config.set("hadoop.security.authentication", "Kerberos");
-        config.set("keytab.file", kerPath);
-        config.set("kerberos.principal", principal);
-        UserGroupInformation.setConfiguration(config);
-        try {
-            UserGroupInformation.loginUserFromKeytab(principal, kerPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Class.forName(driverName);
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
